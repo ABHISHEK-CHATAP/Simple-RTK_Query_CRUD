@@ -1,0 +1,8 @@
+.Card{
+  border: 1px solid rgb(64, 146, 106);
+  border-radius: 10px;
+}
+
+.form-control{
+  margin-left: 20rem;
+}
