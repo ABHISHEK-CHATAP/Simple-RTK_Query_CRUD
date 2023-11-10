@@ -1,28 +1,26 @@
 import { ChangeEvent, FormEvent, useState } from "react";
-import "./App.css";
 import {
-  useDeleteDataMutation,
-  useGetDataQuery,
-  usePostDataMutation,
-  useUpdateDataMutation,
-} from "./redux/StudentsSlice";
-import { useNavigate } from "react-router-dom";
+  useDeleteContactMutation,
+  useContactsQuery,
+  useAddContactMutation,
+  useUpdateContactMutation,
+} from "./redux/ContactApi";
+import { contact } from "./models/contact.model";
 
 function App() {
   const [input, setInput] = useState({
     name: "",
-    body: "",
+    email: "",
   });
-  // const navigate = useNavigate();
 
   // Delete Request
-  const [remove] = useDeleteDataMutation();
+  const [remove] = useDeleteContactMutation();
   //POST Request
-  const [Create] = usePostDataMutation();
+  const [Create] = useAddContactMutation();
   //GET Request
-  const { data, isLoading } = useGetDataQuery("");
+  const { data, isLoading } = useContactsQuery();
   // Edit Request
-  const [updateData] = useUpdateDataMutation();
+  const [updateData] = useUpdateContactMutation();
 
   console.log("loading state : ", isLoading, "This is mi9ne data : ", data);
 
@@ -32,32 +30,35 @@ function App() {
     e.preventDefault();
     const Data = {
       id: data.length + 1,
-      userId: Math.random() * 1000,
-      studentName: input.name,
-      body: input.body,
+      name: input.name,
+      email: input.email,
     };
-    console.log(
-      "handle click is comming corerect so your answer is correct :",
-      Data
-    );
+    console.log("handle click is  :", Data);
     Create(Data); // So bro data is comming
   };
+
 
   function handleDelete(_id: any) {
     remove(_id);
   }
 
-  const handleEdit = (_id: any, data: any) => {
-    console.log("this is my Edit data : ", data);
+
+  function handleEdit(val: contact): void {
+    console.log("this is edit click data ::", val);
+    setInput({
+      name: val.name,
+      email: val.email,
+    });
+    console.log("this is my input data : ", input);
     const ChangeData = {
-      id: data.id,
-      userId: data.id,
-      studentName: data.studentName,
-      body: data.body,
+      id: val.id,
+      name: input.name,
+      email: input.email,
     };
     console.log("changeData:", ChangeData);
-    updateData({ _id,updateCardData: ChangeData} );
-  };
+    updateData( ChangeData );
+    console.log("this is my input data : ", input);
+  }
 
   return (
     <>
@@ -74,11 +75,11 @@ function App() {
         />
         <input
           className="mx-2"
-          placeholder="Enter body .."
+          placeholder="Enter email .."
           type="text"
-          value={input.body}
+          value={input.email}
           onChange={(e: ChangeEvent<HTMLInputElement>) =>
-            setInput({ ...input, body: e.target.value })
+            setInput({ ...input, email: e.target.value })
           }
           required
         />
@@ -89,28 +90,31 @@ function App() {
       </form>
 
       <hr />
+      {/* -------------------------------------------------------------------------------------------------- */}
       <div className="container">
         <div className="row">
           {isLoading ? (
             <h1 className="mx-5 my-5 py-5 px-5">Loading....</h1>
           ) : (
-            data?.map((val: any, _idx: any) => {
+            // ------------------------------------ TERNARY OPERATOR WITH map method...--------------------------------------------------
+            data?.map((val: contact) => {
               return (
                 <div className="col-lg-2 Card my-2 mx-2 py-2" key={val.id}>
-                  <h6>Name : {val.studentName}</h6>
+                  <h6>id : {val.id}</h6>
+                  <h6>Name : {val.name}</h6>
                   <p>
-                    <b>Body : {val.body}</b>
+                    <b>E-mail : {val.email}</b>
                   </p>
                   <div>
                     <span>
-                      <button onClick={() => handleEdit(_idx, val)}>
-                        Edit
-                      </button>
+                      <button onClick={() => handleEdit(val)}>Edit</button>
                     </span>
                     <span className="mx-2">
                       <button onClick={() => handleDelete(val.id)}>
                         Delete
                       </button>
+                      {/* when we hav to delete a contact , we will need to pass the (id) of that contact  */}
+                      {/* and when we want to upadate the contact, we need to to pass whole contact item  */}
                     </span>
                   </div>
                   <br />

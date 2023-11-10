@@ -1,12 +1,12 @@
 import { configureStore } from "@reduxjs/toolkit";
-import { StudentsApi } from "./StudentsSlice";
+import { Api } from "./ContactApi";
 
 export const store = configureStore({
   reducer: {
-    [StudentsApi.reducerPath]: StudentsApi.reducer,
+    [Api.reducerPath]: Api.reducer,
   },
 
-  middleware: (getDefaultMiddleware) => {
-    return getDefaultMiddleware().concat(StudentsApi.middleware);
-  },
+// adding middleware for caching the server data or we need to a valiadtion or we need to do the pulling of the data
+middleware: (getDefaultMiddleware) => {
+  return getDefaultMiddleware().concat(Api.middleware)}
 });
